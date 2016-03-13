@@ -1,5 +1,7 @@
 var express = require('express');
 var path = require('path');
+var client = require('twilio')('AC5499d5936d7cab86eca48aa672f4f011', 'd2c6d6238a3166177156c5161c0acc96')
+
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
@@ -13,7 +15,19 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+app.get('/testtwilio', function(req, res){
+    client.sendMessage({
+      to: '+16789135556',
+      from: '+16788417503',
+      body: 'Guber has text'
 
+    }, function(err, data){
+        if(err)
+          console.log(err);
+        console.log(data);
+    });
+
+});
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
