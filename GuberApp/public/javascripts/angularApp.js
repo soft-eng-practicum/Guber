@@ -11,9 +11,9 @@ app.config([
 			templateUrl: '/home.html',
 			controller: 'MainCtrl',
 			resolve: {
-				postPromise: ['posts', function(posts){
-					return posts.getAll();
-				}]
+				// postPromise: ['posts', function(posts){
+					// return posts.getAll();
+				//}]
 			}
 		});
 
@@ -44,63 +44,15 @@ app.config([
 	$urlRouterProvider.otherwise('home');
 }]);
 
-app.controller('MainCtrl', [
-	'$scope',
-	'posts',
-	'auth',
-	function($scope, posts, auth){
-		$scope.posts = posts.posts;
-		$scope.addPost = function(){
-			if(!$scope.title || $scope.title === '') { return; }
-			posts.create({
-				title: $scope.title,
-				link: $scope.link
-			});
-			$scope.title = '';
-			$scope.link = '';
-		 };
-		 $scope.incrementUpvotes = function(post) {
-		   posts.upvote(post);
-		 };
-		 $scope.decrementUpvotes = function(post) {
-		   posts.downvote(post);
-		 };
-		 $scope.isLoggedIn = auth.isLoggedIn;
-}]);
-
-app.controller('AuthCtrl', [
-	'$scope',
-	'$state',
-	'auth',
-	function($scope, $state, auth){
-	  $scope.user = {};
-
-	  $scope.register = function(){
-	    auth.register($scope.user).error(function(error){
-	      $scope.error = error;
-	    }).then(function(){
-	      $state.go('home');
-	    });
-	  };
-
-	  $scope.logIn = function(){
-	    auth.logIn($scope.user).error(function(error){
-	      $scope.error = error;
-	    }).then(function(){
-	      $state.go('home');
-	    });
-	  };
-}])
-
 app.factory('auth', ['$http', '$window', function($http, $window){
   var auth = {};
 
 	auth.saveToken = function (token){
-	  $window.localStorage['flapper-news-token'] = token;
+	  $window.localStorage['guber-token'] = token;
 	};
 
 	auth.getToken = function (){
-	  return $window.localStorage['flapper-news-token'];
+	  return $window.localStorage['guber-token'];
 	};
 
 	auth.isLoggedIn = function(){
@@ -137,8 +89,48 @@ app.factory('auth', ['$http', '$window', function($http, $window){
 	};
 
 	auth.logOut = function(){
-	  $window.localStorage.removeItem('flapper-news-token');
+	  $window.localStorage.removeItem('guber-token');
 	};
 
   return auth;
 }])
+
+app.controller('AuthCtrl', [
+	'$scope',
+	'$state',
+	'auth',
+	function($scope, $state, auth){
+	  $scope.user = {};
+
+	  $scope.register = function(){
+	    auth.register($scope.user).error(function(error){
+	      $scope.error = error;
+	    }).then(function(){
+	      $state.go('home');
+	    });
+	  };
+
+	  $scope.logIn = function(){
+	    auth.logIn($scope.user).error(function(error){
+	      $scope.error = error;
+	    }).then(function(){
+	      $state.go('home');
+	    });
+	  };
+}])
+
+app.controller('MainCtrl', [
+	'$scope',
+	'auth',
+	function($scope, auth){
+		 $scope.isLoggedIn = auth.isLoggedIn;
+}]);
+
+app.controller('NavCtrl', [
+	'$scope',
+	'auth',
+	function($scope, auth){
+	  $scope.isLoggedIn = auth.isLoggedIn;
+	  $scope.currentUser = auth.currentUser;
+	  $scope.logOut = auth.logOut;
+}]);

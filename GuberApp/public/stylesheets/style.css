@@ -6,3 +6,11 @@ body {
 a {
   color: #00B7FF;
 }
+
+div.menu{
+	background-color: black;
+	width: 100%;
+	font-size:45px;
+	font-weight:bold;
+	color: gray;
+}
