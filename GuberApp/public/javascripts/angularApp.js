@@ -41,6 +41,13 @@ app.config([
 		  }]
 		});
 
+	$stateProvider
+		.state('distTest', {
+		  url: '/distTest',
+		  templateUrl: '/distTest.html',
+		  controller: 'DistCtrl',
+		});
+
 	$urlRouterProvider.otherwise('home');
 }]);
 
@@ -95,6 +102,13 @@ app.factory('auth', ['$http', '$window', function($http, $window){
   return auth;
 }])
 
+app.controller('MainCtrl', [
+	'$scope',
+	'auth',
+	function($scope, auth){
+		 $scope.isLoggedIn = auth.isLoggedIn;
+}]);
+
 app.controller('AuthCtrl', [
 	'$scope',
 	'$state',
@@ -119,13 +133,6 @@ app.controller('AuthCtrl', [
 	  };
 }])
 
-app.controller('MainCtrl', [
-	'$scope',
-	'auth',
-	function($scope, auth){
-		 $scope.isLoggedIn = auth.isLoggedIn;
-}]);
-
 app.controller('NavCtrl', [
 	'$scope',
 	'auth',
@@ -133,4 +140,10 @@ app.controller('NavCtrl', [
 	  $scope.isLoggedIn = auth.isLoggedIn;
 	  $scope.currentUser = auth.currentUser;
 	  $scope.logOut = auth.logOut;
+}]);
+
+app.controller('DistCtrl', [
+	'$scope',
+	function($scope){
+		console.log(user.username);
 }]);
