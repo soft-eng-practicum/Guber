@@ -48,7 +48,7 @@
 <body ng-app="guber" ng-controller="MainCtrl" onload="initialize()">
   <nav class="navbar navbar-default pull-right" ng-controller="NavCtrl">
     <ul class="nav navbar-nav">
-      <li ng-show="isLoggedIn()"><a>{{ currentUser() }}</a></li>
+      <li ng-show="isLoggedIn()"><a>{{ currentUserName() }}</a></li>
       <li ng-show="isLoggedIn()"><a href="" ng-click="logOut()">Log Out</a></li>
       <li ng-hide="isLoggedIn()"><a href="/#/login">Log In</a></li>
       <li ng-hide="isLoggedIn()"><a href="/#/register">Register</a></li>
@@ -66,7 +66,7 @@
     <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add a post.</h3>
   </div>
 
-  <div ng-show="isLoggedIn()" style="padding:10px">
+  <div ng-show="isLoggedIn()" style="padding:10px" ng-controller="MainCtrl">
     <p>
       <input type="text"
         class="form-control"
@@ -80,6 +80,12 @@
         id="end" />
       <button type="submit" class="btn btn-primary" onclick="calcRoute()">Calculate Distance (mi):</button>
       <input type="text" name="distance" id="distance" readonly="true" />
+    </p>
+    <p ng-app="guber" ng-controller="NavCtrl">
+      {{ currentUserName() }}
+      {{ currentHomeAddress() }}
+      {{ currentPhoneNumber() }}
+      {{ currentEmail() }}
     </p>
   </div>
 

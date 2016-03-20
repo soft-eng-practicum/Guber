@@ -11,9 +11,6 @@ app.config([
 			templateUrl: '/home.html',
 			controller: 'MainCtrl',
 			resolve: {
-				// postPromise: ['posts', function(posts){
-					// return posts.getAll();
-				//}]
 			}
 		});
 
@@ -53,11 +50,11 @@ app.config([
 
 app.factory('dist', function(){
 	var dist = {};
-	dist.getDistance = function($scope.user, otherUser){
+	dist.getDistance = function(thisUser, otherUser){
 		return 5;
 	};
 	return dist;
-})
+});
 
 app.factory('auth', ['$http', '$window', function($http, $window){
   var auth = {};
@@ -82,13 +79,13 @@ app.factory('auth', ['$http', '$window', function($http, $window){
 	  }
 	};
 
-	auth.currentUser = function(){
+	auth.currentUserName = function(){
 	  if(auth.isLoggedIn()){
 	    var token = auth.getToken();
 	    var payload = JSON.parse($window.atob(token.split('.')[1]));
 
 	    return payload.username;
-	  }
+	  };
 	};
 
 	auth.register = function(user){
@@ -145,7 +142,7 @@ app.controller('NavCtrl', [
 	'$scope',
 	'auth',
 	function($scope, auth){
-	  $scope.isLoggedIn = auth.isLoggedIn;
-	  $scope.currentUser = auth.currentUser;
+		$scope.isLoggedIn = auth.isLoggedIn;
+	  $scope.currentUserName = auth.currentUserName;
 	  $scope.logOut = auth.logOut;
 }]);

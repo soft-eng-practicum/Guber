@@ -20,12 +20,9 @@ router.post('/register', function(req, res, next){
   var user = new User();
 
   user.username = req.body.username;
-  // Uncomment code below once registration form updated to include these
-  /*
   user.homeAddress = req.body.homeAddress;
   user.phoneNumber = req.body.phoneNumber;
   user.email = req.body.email;
-  */
 
   user.setPassword(req.body.password)
 
@@ -51,5 +48,7 @@ router.post('/login', function(req, res, next){
     }
   })(req, res, next);
 });
+
+
 
 module.exports = router;

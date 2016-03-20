@@ -6,7 +6,7 @@ var UserSchema = new mongoose.Schema({
   username: {type: String, lowercase: true, unique: true},
   hash: String,
   salt: String,
-  homeAddress: String,
+  homeAddress: 'Georgia Gwinnett College',
   phoneNumber: String,
   email: String
 });
