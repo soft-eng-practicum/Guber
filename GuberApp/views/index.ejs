@@ -12,40 +12,9 @@
   var directionDisplay;
   var directionsService = new google.maps.DirectionsService();
   var map;
-
-  function initialize() {
-    directionsDisplay = new google.maps.DirectionsRenderer();
-    var melbourne = new google.maps.LatLng(-37.813187, 144.96298);
-    var myOptions = {
-      zoom:12,
-      mapTypeId: google.maps.MapTypeId.ROADMAP,
-      center: melbourne
-    }
-
-  }
-
-  function calcRoute() {
-    var start = document.getElementById("start").value;
-    var end = document.getElementById("end").value;
-    var distanceInput = document.getElementById("distance");
-
-    var request = {
-      origin:start,
-      destination:end,
-      travelMode: google.maps.DirectionsTravelMode.DRIVING
-    };
-
-    directionsService.route(request, function(response, status) {
-      if (status == google.maps.DirectionsStatus.OK) {
-        directionsDisplay.setDirections(response);
-        distanceInput.value = response.routes[0].legs[0].distance.value / 1609.34;
-        document.getElementById("distance").innerHTML = response.routes[0].legs[0].distance.value / 1609.34;
-      }
-    });
-  }
   </script>
 </head>
-<body ng-app="guber" ng-controller="MainCtrl" onload="initialize()">
+<body ng-app="guber" ng-controller="MainCtrl" data-ng-init="initialize()">
   <nav class="navbar navbar-default pull-right" ng-controller="NavCtrl">
     <ul class="nav navbar-nav">
       <li ng-show="isLoggedIn()"><a>{{ currentUserName() }}</a></li>
@@ -66,7 +35,7 @@
     <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add a post.</h3>
   </div>
 
-  <div ng-show="isLoggedIn()" style="padding:10px" ng-controller="MainCtrl">
+  <div ng-show="isLoggedIn()" style="padding:10px" ng-controller="DistCtrl" >
     <p>
       <input type="text"
         class="form-control"
@@ -78,14 +47,8 @@
         placeholder="End address"
         name="end"
         id="end" />
-      <button type="submit" class="btn btn-primary" onclick="calcRoute()">Calculate Distance (mi):</button>
+      <button type="submit" class="btn btn-primary" ng-click="calcDist()">Calculate Distance (mi):</button>
       <input type="text" name="distance" id="distance" readonly="true" />
-    </p>
-    <p ng-app="guber" ng-controller="NavCtrl">
-      {{ currentUserName() }}
-      {{ currentHomeAddress() }}
-      {{ currentPhoneNumber() }}
-      {{ currentEmail() }}
     </p>
   </div>
 

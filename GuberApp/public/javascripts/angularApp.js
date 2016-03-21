@@ -112,6 +112,15 @@ app.controller('MainCtrl', [
 	'auth',
 	function($scope, auth){
 		 $scope.isLoggedIn = auth.isLoggedIn;
+		 $scope.initialize = function() {
+		     directionsDisplay = new google.maps.DirectionsRenderer();
+		     var melbourne = new google.maps.LatLng(-37.813187, 144.96298);
+		     var myOptions = {
+		       zoom:12,
+		       mapTypeId: google.maps.MapTypeId.ROADMAP,
+		       center: melbourne
+		     };
+			 };
 }]);
 
 app.controller('AuthCtrl', [
@@ -145,4 +154,29 @@ app.controller('NavCtrl', [
 		$scope.isLoggedIn = auth.isLoggedIn;
 	  $scope.currentUserName = auth.currentUserName;
 	  $scope.logOut = auth.logOut;
+}]);
+
+app.controller('DistCtrl', [
+	'$scope',
+	'auth',
+	function($scope, auth){
+		$scope.calcDist = function() {
+			var start = document.getElementById("start").value;
+	    var end = document.getElementById("end").value;
+	    var distanceInput = document.getElementById("distance");
+
+	    var request = {
+	      origin:start,
+	      destination:end,
+	      travelMode: google.maps.DirectionsTravelMode.DRIVING
+	    };
+
+	    directionsService.route(request, function(response, status) {
+	      if (status == google.maps.DirectionsStatus.OK) {
+	        directionsDisplay.setDirections(response);
+	        distanceInput.value = response.routes[0].legs[0].distance.value / 1609.34;
+	        document.getElementById("distance").innerHTML = response.routes[0].legs[0].distance.value / 1609.34;
+	      };
+	    });
+	  };
 }]);
