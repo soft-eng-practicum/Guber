@@ -4,8 +4,7 @@ This is how you will use the Guber web app:
 * 1.Enter the URL after connecting to the GGC VPN. 
 * 2.Click on "Register"(or log in if your already a user)
 * 3.Fill out all attributes and after completing registration you will log in. 
-* 4.Once logged in you will enter a start address(your home) and end address(GGC) 
-* which will output the distance in miles between the two after hitting "Calculate Dist"
+* 4.Once logged in you will enter a start address(your home) and end address(GGC) which will output the distance in miles between the two after hitting "Calculate Dist"
 * 5.Then click the "Text Me" that will send a text diretly to your mobile number.
 
 
