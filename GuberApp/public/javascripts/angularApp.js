@@ -136,6 +136,8 @@ app.controller('AuthCtrl', [
 	    }).then(function(){
 	      $state.go('home');
 	    });
+			// Test statement - to be removed later
+			console.log($scope.user);
 	  };
 
 	  $scope.logIn = function(){
@@ -144,6 +146,8 @@ app.controller('AuthCtrl', [
 	    }).then(function(){
 	      $state.go('home');
 	    });
+			// Test statement - to be removed later
+			console.log($scope.user);
 	  };
 }])
 
@@ -160,6 +164,8 @@ app.controller('DistCtrl', [
 	'$scope',
 	'auth',
 	function($scope, auth){
+    var directionsService = new google.maps.DirectionsService();
+
 		$scope.calcDist = function() {
 			var start = document.getElementById("start").value;
 	    var end = document.getElementById("end").value;
@@ -175,7 +181,7 @@ app.controller('DistCtrl', [
 	      if (status == google.maps.DirectionsStatus.OK) {
 	        directionsDisplay.setDirections(response);
 	        distanceInput.value = response.routes[0].legs[0].distance.value / 1609.34;
-	        document.getElementById("distance").innerHTML = response.routes[0].legs[0].distance.value / 1609.34;
+	        distanceInput.innerHTML = response.routes[0].legs[0].distance.value / 1609.34;
 	      };
 	    });
 	  };
