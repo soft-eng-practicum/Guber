@@ -1,7 +1,7 @@
 # Guber
 
 This is how you will use the Guber web app:
-* 1.Enter the URL after connecting to the GGC VPN. 
+* 1.Enter the URL 172.20.0.90:6832 after connecting to the GGC VPN. 
 * 2.Click on "Register"(or log in if your already a user)
 * 3.Fill out all attributes and after completing registration you will log in. 
 * 4.Once logged in you will enter a start address(your home) and end address(GGC) which will output the distance in miles between the two after hitting "Calculate Dist"
