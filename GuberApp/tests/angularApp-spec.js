@@ -1,20 +1,19 @@
-describe('guber', function () {
-    var scope;
-    var controller;
+describe('Distance Controller', function() {
 
-    beforeEach(module('guber'));
+  var DistCtrl = null;
+  var scope = null;
 
-    describe('DistCtrl', function () {
-        beforeEach(inject(function ($rootScope, $controller) {
-            scope = $rootScope.$new();
-            controller = $controller('DistCtrl', {
-                '$scope': scope,
-                'start': 'Atlanta, GA',
-                'end': 'Boston, MA'
-            });
-        }));
-        it('Should get distance from Atlanta to Boston', function () {
-            expect(distanceInput.innerHTML).toBe('1080.8791181478123');
-        });
-    });
+  beforeEach(module('guber', ['ui.router']));
+
+  // beforeEach(inject(function ($rootScope, $controller) {
+  //   scope = $rootScope.$new();
+  //   DistCtrl = $controller('DistCtrl', {
+  //     $scope: scope
+  //   });
+  // }));
+
+  it('Say GGC', function () {
+    expect($scope.ggc).toEqual("Georgia Gwinnett College");
+  });
+
 });
