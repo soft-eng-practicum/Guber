@@ -48,14 +48,6 @@ app.config([
 	$urlRouterProvider.otherwise('home');
 }]);
 
-app.factory('dist', function(){
-	var dist = {};
-	dist.getDistance = function(thisUser, otherUser){
-		return 5;
-	};
-	return dist;
-});
-
 app.factory('auth', ['$http', '$window', function($http, $window){
   var auth = {};
 
@@ -64,6 +56,7 @@ app.factory('auth', ['$http', '$window', function($http, $window){
 	};
 
 	auth.getToken = function (){
+
 	  return $window.localStorage['guber-token'];
 	};
 
@@ -136,8 +129,6 @@ app.controller('AuthCtrl', [
 	    }).then(function(){
 	      $state.go('home');
 	    });
-			// Test statement - to be removed later
-			console.log($scope.user);
 	  };
 
 	  $scope.logIn = function(){
@@ -146,8 +137,6 @@ app.controller('AuthCtrl', [
 	    }).then(function(){
 	      $state.go('home');
 	    });
-			// Test statement - to be removed later
-			console.log($scope.user);
 	  };
 }])
 
@@ -162,27 +151,72 @@ app.controller('NavCtrl', [
 
 app.controller('DistCtrl', [
 	'$scope',
-	'auth',
 	function($scope, auth){
     var directionsService = new google.maps.DirectionsService();
+		$scope.ggc = "Georgia Gwinnett College";
 
-		$scope.calcDist = function() {
-			var start = document.getElementById("start").value;
-	    var end = document.getElementById("end").value;
-	    var distanceInput = document.getElementById("distance");
+		$scope.getDriver = function() {
+			return document.getElementById("driver").value;
+		}
 
-	    var request = {
-	      origin:start,
-	      destination:end,
-	      travelMode: google.maps.DirectionsTravelMode.DRIVING
-	    };
+		$scope.getRider = function() {
+			return document.getElementById("rider").value;
+		}
 
-	    directionsService.route(request, function(response, status) {
+		$scope.getDriveDuration = function(start, end) {
+			var duration;
+
+			var request = {
+				origin:start,
+				destination:end,
+				travelMode: google.maps.DirectionsTravelMode.DRIVING
+			};
+
+			directionsService.route(request, function(response, status) {
 	      if (status == google.maps.DirectionsStatus.OK) {
 	        directionsDisplay.setDirections(response);
-	        distanceInput.value = response.routes[0].legs[0].distance.value / 1609.34;
-	        distanceInput.innerHTML = response.routes[0].legs[0].distance.value / 1609.34;
+	        duration = response.routes[0].legs[0].duration.value;
+					// Let function know that duration is back
+					$scope.$broadcast('distanceEvent');
 	      };
-	    });
-	  };
+	  	});
+
+			// Wait for service to return duration
+			$scope.$on('distanceEvent', function () {
+				console.log(start + end + duration);
+ 				return duration;
+			});
+		}
+
+		$scope.giveRide = function( driver, rider ) {
+			var wRider = $scope.getDriveDuration(driver, rider) + $scope.getDriveDuration(rider, $scope.ggc);
+			var woRider = $scope.getDriveDuration(driver, $scope.ggc);
+			var ride = document.getElementById("rideResult");
+
+			// console.log(wRider);
+			// console.log(woRider);
+
+			if (wRider <= woRider + 30000) { ride.value = 'Yes'; }
+			else { ride.value = 'No'; }
+		}
+
+		// Soon to be deprecated, replaced by getDriveDistance, getDriveDuration
+		// $scope.calcDist = function(start, end) {
+	  //   var distanceInput = document.getElementById("distance");
+		// 	var durationInput = document.getElementById("duration");
+		//
+	  //   var request = {
+	  //     origin:start,
+	  //     destination:end,
+	  //     travelMode: google.maps.DirectionsTravelMode.DRIVING
+	  //   };
+		//
+	  //   directionsService.route(request, function(response, status) {
+	  //     if (status == google.maps.DirectionsStatus.OK) {
+	  //       directionsDisplay.setDirections(response);
+	  //       distanceInput.value = response.routes[0].legs[0].distance.value / 1609.34;
+		// 			durationInput.value = response.routes[0].legs[0].duration.value;
+	  //     };
+	  //   });
+	  // };
 }]);
