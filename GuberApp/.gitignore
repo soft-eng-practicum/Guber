@@ -1,0 +1,2 @@
+# Ignore NPM files
+node_modules/*

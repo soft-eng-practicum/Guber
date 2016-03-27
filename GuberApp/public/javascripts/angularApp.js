@@ -144,9 +144,10 @@ app.controller('NavCtrl', [
 	'$scope',
 	'auth',
 	function($scope, auth){
-		$scope.isLoggedIn = auth.isLoggedIn;
+	  $scope.isLoggedIn = auth.isLoggedIn;
 	  $scope.currentUserName = auth.currentUserName;
 	  $scope.logOut = auth.logOut;
+	  $scope.test = "Georgia Gwinnett College";
 }]);
 
 app.controller('DistCtrl', [
