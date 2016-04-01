@@ -59,6 +59,19 @@ app.factory('auth', ['$http', '$window', function($http, $window){
 
 	  return $window.localStorage['guber-token'];
 	};
+	
+	//Method to save the user object.
+	app.factory('user', ['$http', '$window', function($http, $window){
+  var user = {};
+
+	auth.saveUser = function (token){
+	  $window.localStorage['user-token'] = token;
+	};
+
+	auth.getUser = function (){
+	  return $window.localStorage['user-token'];
+	};
+	
 
 	auth.isLoggedIn = function(){
 	  var token = auth.getToken();
