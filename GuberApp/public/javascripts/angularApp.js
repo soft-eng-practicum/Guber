@@ -84,12 +84,14 @@ app.factory('auth', ['$http', '$window', function($http, $window){
 	auth.register = function(user){
 	  return $http.post('/register', user).success(function(data){
 	    auth.saveToken(data.token);
+			auth.saveUser(user);
 	  });
 	};
 
 	auth.logIn = function(user){
 	  return $http.post('/login', user).success(function(data){
 	    auth.saveToken(data.token);
+			auth.saveUser(user);
 	  });
 	};
 
@@ -151,6 +153,7 @@ app.controller('NavCtrl', [
 
 app.controller('DistCtrl', [
 	'$scope',
+	'auth',
 	function($scope, auth){
     var directionsService = new google.maps.DirectionsService();
 		$scope.ggc = "Georgia Gwinnett College";
@@ -163,60 +166,65 @@ app.controller('DistCtrl', [
 			return document.getElementById("rider").value;
 		}
 
-		$scope.getDriveDuration = function(start, end) {
-			var duration;
+		$scope.giveRide = function( driver, rider ) {
+			var wRider1, wRider2, woRider;
+			var i=0;
+			var ride = document.getElementById("rideResult");
 
-			var request = {
-				origin:start,
-				destination:end,
+			var request1 = {
+				origin:driver,
+				destination:rider,
 				travelMode: google.maps.DirectionsTravelMode.DRIVING
 			};
 
-			directionsService.route(request, function(response, status) {
+			var request2 = {
+				origin:rider,
+				destination:$scope.ggc,
+				travelMode: google.maps.DirectionsTravelMode.DRIVING
+			};
+
+			var request3 = {
+				origin:driver,
+				destination:$scope.ggc,
+				travelMode: google.maps.DirectionsTravelMode.DRIVING
+			};
+
+			directionsService.route(request1, function(response, status) {
 	      if (status == google.maps.DirectionsStatus.OK) {
 	        directionsDisplay.setDirections(response);
-	        duration = response.routes[0].legs[0].duration.value;
-					// Let function know that duration is back
-					$scope.$broadcast('distanceEvent');
+	        wRider1 = response.routes[0].legs[0].duration.value;
+					i++;
+					$scope.$broadcast('googleEvent');
 	      };
 	  	});
+			directionsService.route(request2, function(response, status) {
+				if (status == google.maps.DirectionsStatus.OK) {
+					directionsDisplay.setDirections(response);
+					wRider2 = response.routes[0].legs[0].duration.value;
+					i++;
+					$scope.$broadcast('googleEvent');
+				};
+			});
+			directionsService.route(request3, function(response, status) {
+				if (status == google.maps.DirectionsStatus.OK) {
+					directionsDisplay.setDirections(response);
+					woRider = response.routes[0].legs[0].duration.value;
+					i++;
+					$scope.$broadcast('googleEvent');
+				};
+			});
+			// Wait for all three distances to be computed
+			$scope.$on('googleEvent', function () {
+				if (i>=3) {
+					console.log(wRider1);
+					console.log(wRider2);
+					console.log(woRider);
 
-			// Wait for service to return duration
-			$scope.$on('distanceEvent', function () {
-				console.log(start + end + duration);
- 				return duration;
+					// If rider adds no more than 10 minutes to drive, give ride
+					if (wRider1 + wRider2 <= woRider + 600) { ride.value = 'Yes'; }
+					else { ride.value = 'No'; }
+				};
 			});
 		}
 
-		$scope.giveRide = function( driver, rider ) {
-			var wRider = $scope.getDriveDuration(driver, rider) + $scope.getDriveDuration(rider, $scope.ggc);
-			var woRider = $scope.getDriveDuration(driver, $scope.ggc);
-			var ride = document.getElementById("rideResult");
-
-			// console.log(wRider);
-			// console.log(woRider);
-
-			if (wRider <= woRider + 30000) { ride.value = 'Yes'; }
-			else { ride.value = 'No'; }
-		}
-
-		// Soon to be deprecated, replaced by getDriveDistance, getDriveDuration
-		// $scope.calcDist = function(start, end) {
-	  //   var distanceInput = document.getElementById("distance");
-		// 	var durationInput = document.getElementById("duration");
-		//
-	  //   var request = {
-	  //     origin:start,
-	  //     destination:end,
-	  //     travelMode: google.maps.DirectionsTravelMode.DRIVING
-	  //   };
-		//
-	  //   directionsService.route(request, function(response, status) {
-	  //     if (status == google.maps.DirectionsStatus.OK) {
-	  //       directionsDisplay.setDirections(response);
-	  //       distanceInput.value = response.routes[0].legs[0].distance.value / 1609.34;
-		// 			durationInput.value = response.routes[0].legs[0].duration.value;
-	  //     };
-	  //   });
-	  // };
 }]);
