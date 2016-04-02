@@ -59,61 +59,64 @@ app.factory('auth', ['$http', '$window', function($http, $window){
 
 	  return $window.localStorage['guber-token'];
 	};
-	
-	//Method to save the user object.
-	app.factory('user', ['$http', '$window', function($http, $window){
-  var user = {};
-
-	auth.saveUser = function (token){
-	  $window.localStorage['user-token'] = token;
-	};
-
-	auth.getUser = function (){
-	  return $window.localStorage['user-token'];
-	};
-	
 
 	auth.isLoggedIn = function(){
-	  var token = auth.getToken();
+		var token = auth.getToken();
 
-	  if(token){
-	    var payload = JSON.parse($window.atob(token.split('.')[1]));
+		if(token){
+			var payload = JSON.parse($window.atob(token.split('.')[1]));
 
-	    return payload.exp > Date.now() / 1000;
-	  } else {
-	    return false;
-	  }
+			return payload.exp > Date.now() / 1000;
+		} else {
+			return false;
+		}
 	};
 
 	auth.currentUserName = function(){
-	  if(auth.isLoggedIn()){
-	    var token = auth.getToken();
-	    var payload = JSON.parse($window.atob(token.split('.')[1]));
+		if(auth.isLoggedIn()){
+			var token = auth.getToken();
+			var payload = JSON.parse($window.atob(token.split('.')[1]));
 
-	    return payload.username;
-	  };
+			return payload.username;
+		};
 	};
 
 	auth.register = function(user){
-	  return $http.post('/register', user).success(function(data){
-	    auth.saveToken(data.token);
+		return $http.post('/register', user).success(function(data){
+			auth.saveToken(data.token);
 			auth.saveUser(user);
-	  });
+		});
 	};
 
 	auth.logIn = function(user){
-	  return $http.post('/login', user).success(function(data){
-	    auth.saveToken(data.token);
+		return $http.post('/login', user).success(function(data){
+			auth.saveToken(data.token);
 			auth.saveUser(user);
-	  });
+		});
 	};
 
 	auth.logOut = function(){
-	  $window.localStorage.removeItem('guber-token');
+		$window.localStorage.removeItem('guber-token');
 	};
 
-  return auth;
-}])
+	return auth;
+}]);
+
+//Method to save the user object.
+app.factory('user', ['$http', '$window', function($http, $window){
+	var user = {};
+
+	auth.saveUser = function (token){
+		$window.localStorage['user-token'] = token;
+	};
+
+	auth.getUser = function (){
+		return $window.localStorage['user-token'];
+	};
+
+
+	return user;
+}]);
 
 app.controller('MainCtrl', [
 	'$scope',
@@ -189,13 +192,11 @@ app.controller('DistCtrl', [
 				destination:rider,
 				travelMode: google.maps.DirectionsTravelMode.DRIVING
 			};
-
 			var request2 = {
 				origin:rider,
 				destination:$scope.ggc,
 				travelMode: google.maps.DirectionsTravelMode.DRIVING
 			};
-
 			var request3 = {
 				origin:driver,
 				destination:$scope.ggc,
@@ -226,6 +227,7 @@ app.controller('DistCtrl', [
 					$scope.$broadcast('googleEvent');
 				};
 			});
+
 			// Wait for all three distances to be computed
 			$scope.$on('googleEvent', function () {
 				if (i>=3) {
@@ -239,5 +241,4 @@ app.controller('DistCtrl', [
 				};
 			});
 		}
-
 }]);
