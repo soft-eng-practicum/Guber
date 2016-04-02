@@ -1,8 +1,9 @@
 window.google = {
 	maps: {
-    DirectionsService: function() {
-      return {};
-    },
+    DirectionsService: function() {},
+		DirectionStatus: {OK: ''},
+		DirectionsTravelMode: {DRIVING: ''},
+
 		LatLng: function(lat, lng) {
 			return {
 				latitude: parseFloat(lat),

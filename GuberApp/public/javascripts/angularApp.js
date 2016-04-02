@@ -175,7 +175,11 @@ app.controller('DistCtrl', [
 		$scope.ggc = "Georgia Gwinnett College";
 
 		$scope.getDriver = function() {
-			return document.getElementById("driver").value;
+			return getDriver(document.getElementById("driver"));
+		}
+
+		$scope.getDriver = function(id) {
+			return id.value;
 		}
 
 		$scope.getRider = function() {
@@ -236,8 +240,14 @@ app.controller('DistCtrl', [
 					console.log(woRider);
 
 					// If rider adds no more than 10 minutes to drive, give ride
-					if (wRider1 + wRider2 <= woRider + 600) { ride.value = 'Yes'; }
-					else { ride.value = 'No'; }
+					if (wRider1 + wRider2 <= woRider + 600) {
+						ride.value = 'Yes';
+						return true;
+					}
+					else {
+						ride.value = 'No';
+						return false
+					}
 				};
 			});
 		}
