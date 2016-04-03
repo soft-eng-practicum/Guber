@@ -45,17 +45,6 @@
         placeholder="1234 Street, City, State"
         name="rider"
         id="rider" />
-
-      <!--<button type="submit"
-        class="btn btn-primary"
-        ng-click="calcDist( getDriver(), getRider() )">
-          Calculate Dist/Time Between:
-      </button><br>
-      <input type="text" name="distance" id="distance" readonly="true" />
-      <label for="distance">(mi)</label>
-      <input type="text" name="duration" id="duration" readonly="true" />
-      <label for="duration">(sec)</label>
-      -->
     </p>
 
     <form>
@@ -71,6 +60,10 @@
         id="mpn" />
       <button type="submit" class="btn btn-primary" ng-click="getText()">Text Me!</button>
     </p>
+    <h1>Users in database:</h1>
+    <div ng-repeat="user in users | orderBy:'-username'">
+      {{ user.username}} : {{user.email}} : {{user.homeAddress}} : {{user.phoneNumber}}
+    </div>
   </div>
 
 </script>
@@ -81,6 +74,7 @@
   </div>
 
   <div ng-show="error" class="alert alert-danger row">
+    <span>Error:</span>
     <span>{{ error.message }}</span>
   </div>
 
@@ -112,12 +106,6 @@
       placeholder="Phone Number"
       ng-model="user.phoneNumber"></input>
     </div>
-	<div class="form-group">
-      <input type="email"
-      class="form-control"
-      placeholder="Email"
-      ng-model="user.email"></input>
-    </div>
     <button type="submit" class="btn btn-primary">Register</button>
   </form>
 </script>
@@ -128,6 +116,7 @@
   </div>
 
   <div ng-show="error" class="alert alert-danger row">
+    <span>Error:</span>
     <span>{{ error.message }}</span>
   </div>
 

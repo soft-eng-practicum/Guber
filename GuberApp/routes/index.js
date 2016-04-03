@@ -22,7 +22,7 @@ router.post('/register', function(req, res, next){
   user.username = req.body.username;
   user.homeAddress = req.body.homeAddress;
   user.phoneNumber = req.body.phoneNumber;
-  user.email = req.body.email;
+  user.email = user.username + "@ggc.edu";
 
   user.setPassword(req.body.password)
 
@@ -49,6 +49,12 @@ router.post('/login', function(req, res, next){
   })(req, res, next);
 });
 
+router.get('/users', function(req, res, next) {
+	User.find(function(err, users){
+		if(err){ return next(err); }
 
+		res.json(users);
+	});
+});
 
 module.exports = router;

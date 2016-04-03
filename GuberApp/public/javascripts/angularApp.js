@@ -11,8 +11,23 @@ app.config([
 			templateUrl: '/home.html',
 			controller: 'MainCtrl',
 			resolve: {
+				postPromise: ['users', function(users){
+					return users.getAll();
+				}]
 			}
 		});
+
+		$stateProvider
+			.state('users', {
+			  url: '/users/{id}',
+			  templateUrl: '/users.html',
+			  controller: 'UsersCtrl',
+			  resolve: {
+			    user: ['$stateParams', 'users', function($stateParams, users) {
+			      return users.get($stateParams.id);
+			    }]
+			  }
+			});
 
 	$stateProvider
 		.state('login', {
@@ -38,18 +53,62 @@ app.config([
 		  }]
 		});
 
-	$stateProvider
-		.state('distTest', {
-		  url: '/distTest',
-		  templateUrl: '/distTest.html',
-		  controller: 'DistCtrl',
-		});
-
 	$urlRouterProvider.otherwise('home');
+}]);
+
+app.factory('users', ['$http', 'auth', function($http, auth){
+	var o = {
+		users: []
+		};
+		o.getAll = function() {
+	    return $http.get('/users').success(function(data){
+	      angular.copy(data, o.users);
+	    });
+	  };
+		o.create = function(user) {
+		  return $http.post('/users', user, {
+		    headers: {Authorization: 'Bearer '+auth.getToken()}
+		  }).success(function(data){
+		    o.users.push(data);
+		  });
+		};
+		o.get = function(id) {
+		  return $http.get('/users/' + id).then(function(res){
+		    return res.data;
+		  });
+		};
+
+		return o;
+}]);
+
+app.controller('MainCtrl', [
+	'$scope',
+	'auth',
+	'users',
+	function($scope, auth, users){
+		$scope.users = users.users;
+		 $scope.isLoggedIn = auth.isLoggedIn;
+		 $scope.initialize = function() {
+		     directionsDisplay = new google.maps.DirectionsRenderer();
+		     var melbourne = new google.maps.LatLng(-37.813187, 144.96298);
+		     var myOptions = {
+		       zoom:12,
+		       mapTypeId: google.maps.MapTypeId.ROADMAP,
+		       center: melbourne
+		     };
+			 };
 }]);
 
 app.factory('auth', ['$http', '$window', function($http, $window){
   var auth = {};
+
+	auth.saveUser = function (currentUser){
+		$window.localStorage['user'] = currentUser;
+	};
+
+	auth.getUser = function (){
+		return $window.localStorage['user'];
+	};
 
 	auth.saveToken = function (token){
 	  $window.localStorage['guber-token'] = token;
@@ -99,38 +158,6 @@ app.factory('auth', ['$http', '$window', function($http, $window){
 	};
 
 	return auth;
-}]);
-
-//Method to save the user object.
-app.factory('user', ['$http', '$window', function($http, $window){
-	var user = {};
-
-	auth.saveUser = function (token){
-		$window.localStorage['user-token'] = token;
-	};
-
-	auth.getUser = function (){
-		return $window.localStorage['user-token'];
-	};
-
-
-	return user;
-}]);
-
-app.controller('MainCtrl', [
-	'$scope',
-	'auth',
-	function($scope, auth){
-		 $scope.isLoggedIn = auth.isLoggedIn;
-		 $scope.initialize = function() {
-		     directionsDisplay = new google.maps.DirectionsRenderer();
-		     var melbourne = new google.maps.LatLng(-37.813187, 144.96298);
-		     var myOptions = {
-		       zoom:12,
-		       mapTypeId: google.maps.MapTypeId.ROADMAP,
-		       center: melbourne
-		     };
-			 };
 }]);
 
 app.controller('AuthCtrl', [
@@ -250,4 +277,24 @@ app.controller('DistCtrl', [
 				};
 			});
 		}
+}]);
+
+app.controller('UsersCtrl', [
+	'$scope',
+	'users',
+	'user',
+	'auth',
+	function($scope, users, user, auth){
+	  $scope.user = user;
+		$scope.addComment = function(){
+		  if($scope.body === '') { return; }
+		  users.addComment(user._id, {
+		    body: $scope.body,
+		    author: 'user',
+		  }).success(function(comment) {
+		    $scope.user.comments.push(comment);
+		  });
+		  $scope.body = '';
+		};
+		$scope.isLoggedIn = auth.isLoggedIn;
 }]);
