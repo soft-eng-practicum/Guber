@@ -201,11 +201,7 @@ app.controller('DistCtrl', [
 		$scope.ggc = "Georgia Gwinnett College";
 
 		$scope.getDriver = function() {
-			return getDriver(document.getElementById("driver"));
-		}
-
-		$scope.getDriver = function(id) {
-			return id.value;
+			return document.getElementById("driver").value;
 		}
 
 		$scope.getRider = function() {
