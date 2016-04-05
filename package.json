@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node GuberApp/bin/www",
-    "test": "cd GuberApp && karma start --browsers PhantomJS --single-run"
+    "test": "cd GuberApp && karma start --single-run"
   },
   "dependencies": {
     "angular": "^1.5.2",
