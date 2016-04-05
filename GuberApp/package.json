@@ -21,7 +21,8 @@
     "phantom": "^2.0.10",
     "sendgrid": "^2.0.0",
     "serve-favicon": "~2.3.0",
-    "twilio": "^2.9.0"
+    "twilio": "^2.9.0",
+    "useragent": "~2.1.9"
   },
   "devDependencies": {
     "angular-mocks": "^1.5.2",
