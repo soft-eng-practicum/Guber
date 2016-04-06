@@ -26,12 +26,16 @@
   </div>
 
 <script type="text/ng-template" id="/home.html">
+
   <div ng-hide="isLoggedIn()">
     <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add a post.</h3>
     <p>What is Guber? Guber is the best. This is simply a test.</p>
   </div>
 
   <div ng-show="isLoggedIn()" style="padding:10px" ng-controller="DistCtrl" >
+    <button type="submit" class="btn btn-primary" ng-click="getDrivers()">I need a ride!</button>
+
+
     <p>
       <label for="driver">Driver Address:</label>
       <input type="text"
@@ -61,10 +65,10 @@
         id="mpn" />
       <button type="submit" class="btn btn-primary" ng-click="getText()">Text Me!</button>
     </p>
-    <h1>Users in database:</h1>
+    <!--<h1>Users in database:</h1>
     <div ng-repeat="user in users | orderBy:'-username'">
       {{ user.username}} : {{user.email}} : {{user.homeAddress}} : {{user.phoneNumber}}
-    </div>
+    </div>-->
   </div>
 
 </script>

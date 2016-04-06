@@ -107,6 +107,7 @@ app.factory('auth', ['$http', '$window', function($http, $window){
 	};
 
 	auth.getUser = function (){
+		console.log($window.localStorage['user']);
 		return $window.localStorage['user'];
 	};
 
@@ -196,9 +197,29 @@ app.controller('NavCtrl', [
 app.controller('DistCtrl', [
 	'$scope',
 	'auth',
+	'users',
 	function($scope, auth){
     var directionsService = new google.maps.DirectionsService();
 		$scope.ggc = "Georgia Gwinnett College";
+
+		$scope.getDrivers = function(users) {
+
+			var currentUsername = auth.currentUserName();
+			var currentUser;
+
+			angular.forEach($scope.users, function(value, key) {
+				if (value.username == currentUsername) {
+					currentUser = value;
+				}
+			});
+
+			console.log(currentUser);
+
+			angular.forEach($scope.users, function(value, key) {
+			  this.log(key + ": " + value.username + ": " + value.homeAddress);
+			}, console);
+
+		}
 
 		$scope.getDriver = function() {
 			return document.getElementById("driver").value;
