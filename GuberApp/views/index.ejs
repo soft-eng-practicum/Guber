@@ -44,47 +44,23 @@
 	<b>
 	Guber is a website that is focused on building a community for carpooling to Georgia Gwinnett College.
 	</b>
+  <div><i>We can&#39t solve your homework problems, but we can solve your ride problems.</i></div>
 	</center>
 	</p>
   </div>
 
   <div ng-show="isLoggedIn()" style="padding:10px" ng-controller="DistCtrl" >
-    <button type="submit" class="btn btn-primary" ng-click="getDrivers()">I need a ride!</button>
+    <center><button type="submit" class="btn btn-primary" ng-click="getDrivers()">I need a ride!</button></center>
 
-
-    <!--<p>
-      <label for="driver">Driver Address:</label>
-      <input type="text"
-        class="form-control"
-        placeholder="1234 Street, City, State"
-        name="driver"
-        id="driver"/>
-
-      <label for="rider">Rider Address:</label>
-      <input type="text"
-        class="form-control"
-        placeholder="1234 Street, City, State"
-        name="rider"
-        id="rider" />
-    </p>
-
-    <form>
-      <button class="btn btn-primary" ng-click="giveRide( getDriver(), getRider() )">Is rider close enough for a ride?</button>
-      <input type="text" name ="rideResult" id="rideResult" readonly="true" />
-    </form>-->
-
-    <p>
+  <!--  <p>
       <input type="text"
         class="form-control"
         placeholder="Mobile Phone Number"
         name="mpn"
         id="mpn" />
       <button type="submit" class="btn btn-primary" ng-click="getText()">Text Me!</button>
-    </p>
-    <!--<h1>Users in database:</h1>
-    <div ng-repeat="user in users | orderBy:'-username'">
-      {{ user.username}} : {{user.email}} : {{user.homeAddress}} : {{user.phoneNumber}}
-    </div>-->
+    </p> -->
+
   </div>
 
 </script>
