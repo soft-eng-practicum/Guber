@@ -194,10 +194,6 @@ app.controller('NavCtrl', [
 	  $scope.logOut = auth.logOut;
 }]);
 
-app.factory("googleService", function($q) {
-
-})
-
 app.controller('DistCtrl', [
 	'$scope',
 	'auth',
@@ -274,6 +270,7 @@ app.controller('DistCtrl', [
 			return deferred.promise;
 		}
 
+		// Method called by 'Get ride' button on main webpage
 		$scope.getDrivers = function(users) {
 
 			// Use authentication to retrieve current username
@@ -287,22 +284,33 @@ app.controller('DistCtrl', [
 				}
 			});
 
-			giveRide('Athens, GA', 'Dacula, GA')
-				.then(function(result){
-					console.log(result);
-				});
+			// Essentially a for loop --> for(user in $scop.users)
+			$q.all($scope.users.map(function(user) {
+				if (currentUser.username != user.username){
+					console.log(user.username);
+			    return giveRide(user.homeAddress, currentUser.homeAddress)
+						.then(function (response) {
+							console.log('giveRide returns: ' + user.username + " " + response);
+							/*
+								The promise return a response. The response is boolean.
+								True means currentUser is close enough to get a ride from user.
+								Inside the if statement, you can get the driver's phone number with
+								user.phoneNumber.
+								
+								Issue: Right now, not all users are returning a response.
+									The ones that do look correct, though.
+							*/
+							if(reponse){
+								// Put code here about what you want to do with the response.
 
-			// googleRequest('Athens, GA', 'Dacula, GA')
-			// 	.then(function(result){
-			// 		console.log(result);
-			// 	});
 
-			// $q.all($scope.users.map(function(user) {
-		  //   return giveRide(currentUser.homeAddress, user.homeAddress)
-			// 		.then(function (response) {
-		  //       console.log('giveRide returns: ' + user.username + " " + response);
-		  //   });
-			// }))
+
+
+							}
+						}, function(error) {
+							console.log('giveRide error from ' + user.username);
+						});
+			}}))
 		}
 }]);
 
