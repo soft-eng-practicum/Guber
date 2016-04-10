@@ -194,20 +194,87 @@ app.controller('NavCtrl', [
 	  $scope.logOut = auth.logOut;
 }]);
 
+app.factory("googleService", function($q) {
+
+})
+
 app.controller('DistCtrl', [
 	'$scope',
 	'auth',
-	'users',
 	'$q',
-	'$timeout',
-	function($scope, auth, $q, $timeout){
+	'users',
+	function($scope, auth, $q){
     var directionsService = new google.maps.DirectionsService();
 		$scope.ggc = "Georgia Gwinnett College";
 		$scope.potentialDrivers = [];
 
-		$scope.ride = false;
+		// Find driving duration from google server, returns promise.
+		googleRequest = function(address1, address2){
+			var output = null;
+			var deferred = $q.defer();
 
-		$scope.getDrivers = function(users, $q) {
+			var request = {
+				origin: address1,
+				destination: address2,
+				travelMode: google.maps.DirectionsTravelMode.DRIVING
+			};
+
+			// Send requests to Google server
+			directionsService.route(request, function(response, status) {
+				if (status == google.maps.DirectionsStatus.OK) {
+					directionsDisplay.setDirections(response);
+					output = response.routes[0].legs[0].duration.value;
+					deferred.resolve(output);
+				};
+			})
+
+			return deferred.promise;
+		}
+
+		// Given driver and rider addresses, determines if rider is close enough for a ride
+		giveRide = function( driverAddress, riderAddress ) {
+			var wRider1, wRider2, woRider;
+			var i=0;
+			var output = null;
+			var deferred = $q.defer();
+
+			googleRequest(driverAddress, riderAddress)
+				.then(function(result){
+					wRider1 = result;
+					i++;
+					$scope.$broadcast('googleEvent');
+				});
+			googleRequest(riderAddress, $scope.ggc)
+				.then(function(result){
+					wRider2 = result;
+					i++;
+					$scope.$broadcast('googleEvent');
+				});
+			googleRequest(driverAddress, $scope.ggc)
+				.then(function(result){
+					woRider = result;
+					i++;
+					$scope.$broadcast('googleEvent');
+				});
+
+			$scope.$on('googleEvent', function () {
+				if (i>=3) {
+					// If rider adds no more than 10 min = 600 sec to drive, give ride
+					if (wRider1 + wRider2 <= woRider + 600) {
+						output = true; // Return boolean for computations
+					}
+					// Otherwise, don't
+					else {
+						output = false // Return boolean for computations
+					}
+					deferred.resolve(output);
+				};
+			});
+
+			return deferred.promise;
+		}
+
+		$scope.getDrivers = function(users) {
 
 			// Use authentication to retrieve current username
 			var currentUsername = auth.currentUserName();
@@ -220,92 +287,22 @@ app.controller('DistCtrl', [
 				}
 			});
 
-			// Loop through users in database and check for potential drivers
-			// angular.forEach($scope.users, function(user, key) {
-			// 	if(currentUsername != user.username){
-			// 		this.log('rider: ' + currentUser.username);
-			// 		this.log('driver: ' + user.username);
-			//
-			// 		$scope.ride = $scope.giveRide(currentUser.homeAddress, user.homeAddress);
-			//
-			// 		console.log('Ride? ' + $scope.ride);
-			// 	}
-			// }, console);
-		}
+			giveRide('Athens, GA', 'Dacula, GA')
+				.then(function(result){
+					console.log(result);
+				});
 
-		// $scope.getDriver = function() {
-		// 	return document.getElementById("driver").value;
-		// }
-		//
-		// $scope.getRider = function() {
-		// 	return document.getElementById("rider").value;
-		// }
+			// googleRequest('Athens, GA', 'Dacula, GA')
+			// 	.then(function(result){
+			// 		console.log(result);
+			// 	});
 
-		// Given driver and rider addresses, determines if rider is close enough for a ride
-		$scope.giveRide = function( driverAddress, riderAddress ) {
-			var wRider1, wRider2, woRider;
-			var i=0;
-			var rideResult = document.getElementById("rideResult");
-
-			// Request to send to Google server
-			var request1 = {
-				origin:driverAddress,
-				destination:riderAddress,
-				travelMode: google.maps.DirectionsTravelMode.DRIVING
-			};
-			var request2 = {
-				origin:riderAddress,
-				destination:$scope.ggc,
-				travelMode: google.maps.DirectionsTravelMode.DRIVING
-			};
-			var request3 = {
-				origin:driverAddress,
-				destination:$scope.ggc,
-				travelMode: google.maps.DirectionsTravelMode.DRIVING
-			};
-
-			// Send requests to Google server
-			directionsService.route(request1, function(response, status) {
-	      if (status == google.maps.DirectionsStatus.OK) {
-	        directionsDisplay.setDirections(response);
-	        wRider1 = response.routes[0].legs[0].duration.value;
-					i++; // Add one to count of results
-					$scope.$broadcast('googleEvent'); // Broadcast when result comes back
-	      };
-	  	});
-			directionsService.route(request2, function(response, status) {
-				if (status == google.maps.DirectionsStatus.OK) {
-					directionsDisplay.setDirections(response);
-					wRider2 = response.routes[0].legs[0].duration.value;
-					i++; // Add one to count of results
-					$scope.$broadcast('googleEvent'); // Broadcast when result comes back
-				};
-			});
-			directionsService.route(request3, function(response, status) {
-				if (status == google.maps.DirectionsStatus.OK) {
-					directionsDisplay.setDirections(response);
-					woRider = response.routes[0].legs[0].duration.value;
-					i++; // Add one to count of results
-					$scope.$broadcast('googleEvent'); // Broadcast when result comes back
-				};
-			});
-
-			// Wait for all three results to come back
-			$scope.$on('googleEvent', function () {
-				if (i>=3) {
-
-					// If rider adds no more than 10 min = 600 sec to drive, give ride
-					if (wRider1 + wRider2 <= woRider + 600) {
-						rideResult.value = 'Yes'; // HTML element id, for UI
-						return true; // Return boolean for computations
-					}
-					// Otherwise, don't
-					else {
-						rideResult.value = 'No'; // HTML element id, for UI
-						return false // Return boolean for computations
-					}
-				};
-			});
+			// $q.all($scope.users.map(function(user) {
+		  //   return giveRide(currentUser.homeAddress, user.homeAddress)
+			// 		.then(function (response) {
+		  //       console.log('giveRide returns: ' + user.username + " " + response);
+		  //   });
+			// }))
 		}
 }]);
 
