@@ -284,10 +284,11 @@ app.controller('DistCtrl', [
 				}
 			});
 
+			document.getElementById('drivers').innerHTML = '<h3>Potential Drivers:</h3>';
+
 			// Essentially a for loop --> for(user in $scop.users)
 			$q.all($scope.users.map(function(user) {
 				if (currentUser.username != user.username){
-					console.log(user.username);
 			    return giveRide(user.homeAddress, currentUser.homeAddress)
 						.then(function (response) {
 							console.log('giveRide returns: ' + user.username + " " + response);
@@ -296,15 +297,14 @@ app.controller('DistCtrl', [
 								True means currentUser is close enough to get a ride from user.
 								Inside the if statement, you can get the driver's phone number with
 								user.phoneNumber.
-								
+
 								Issue: Right now, not all users are returning a response.
 									The ones that do look correct, though.
 							*/
-							if(reponse){
+							if(Boolean(response)){
 								// Put code here about what you want to do with the response.
-
-
-
+								document.getElementById('drivers').innerHTML += user.username +
+										': ' + user.phoneNumber + '<br>';
 
 							}
 						}, function(error) {

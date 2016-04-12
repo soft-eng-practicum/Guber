@@ -30,28 +30,28 @@
   <div ng-hide="isLoggedIn()">
     <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can add a post.</h3>
     <p>
-	<center>
-	<img src="https://raw.githubusercontent.com/soft-eng-practicum/Guber/master/GuberApp/public/images/guberlogo.jpg?token=AP6zgJA_HjwGN4wJG0wgXL1Yhllyq5djks5XDtkswA%3D%3D" alt="Guber Logo">
-	</center>
-	<h3>
-	<b>
-	<center>
-	What is Guber?
-	</center>
-	</b>
-	</h3>
-	<center>
-	<b>
-	Guber is a website that is focused on building a community for carpooling to Georgia Gwinnett College.
-	</b>
-  <div><i>We can&#39t solve your homework problems, but we can solve your ride problems.</i></div>
-	</center>
-	</p>
+    	<center>
+    	 <img src="https://raw.githubusercontent.com/soft-eng-practicum/Guber/master/GuberApp/public/images/guberlogo.jpg?token=AP6zgJA_HjwGN4wJG0wgXL1Yhllyq5djks5XDtkswA%3D%3D" alt="Guber Logo">
+    	</center>
+      	<h3>
+        	<b>
+          	<center>
+          	What is Guber?
+          	</center>
+        	</b>
+      	</h3>
+    	<center>
+      	<b>
+      	Guber is a website that is focused on building a community for carpooling to Georgia Gwinnett College.
+      	</b>
+        <div><i>We can&#39t solve your homework problems, but we can solve your ride problems.</i></div>
+    	</center>
+  	</p>
   </div>
 
   <div ng-show="isLoggedIn()" style="padding:10px" ng-controller="DistCtrl" >
     <center><button type="submit" class="btn btn-primary" ng-click="getDrivers()">I need a ride!</button></center>
-
+    <div id="drivers"></div>
   <!--  <p>
       <input type="text"
         class="form-control"
