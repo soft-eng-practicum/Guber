@@ -52,14 +52,6 @@
   <div ng-show="isLoggedIn()" style="padding:10px" ng-controller="DistCtrl" >
     <center><button type="submit" class="btn btn-primary" ng-click="getDrivers()">I need a ride!</button></center>
     <div id="drivers"></div>
-  <!--  <p>
-      <input type="text"
-        class="form-control"
-        placeholder="Mobile Phone Number"
-        name="mpn"
-        id="mpn" />
-      <button type="submit" class="btn btn-primary" ng-click="getText()">Text Me!</button>
-    </p> -->
 
   </div>
 
@@ -105,6 +97,10 @@
     </div>
     <button type="submit" class="btn btn-primary">Register</button>
   </form>
+  <div> By registering, you agree to the
+    <a ng-click="terms()">terms and conditions</a>
+     of this site.
+   </div>
 </script>
 
 <script type="text/ng-template" id="/login.html">

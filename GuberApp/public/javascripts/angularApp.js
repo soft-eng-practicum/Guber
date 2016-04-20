@@ -85,10 +85,11 @@ app.controller('MainCtrl', [
 	'$scope',
 	'auth',
 	'users',
-	function($scope, auth, users){
+	'$window',
+	function($scope, auth, users, $window){
 		$scope.users = users.users;
-		 $scope.isLoggedIn = auth.isLoggedIn;
-		 $scope.initialize = function() {
+		$scope.isLoggedIn = auth.isLoggedIn;
+		$scope.initialize = function() {
 		     directionsDisplay = new google.maps.DirectionsRenderer();
 		     var melbourne = new google.maps.LatLng(-37.813187, 144.96298);
 		     var myOptions = {
@@ -97,6 +98,9 @@ app.controller('MainCtrl', [
 		       center: melbourne
 		     };
 			 };
+		$scope.terms = function(){
+			$window.alert("All your base are belong to us.");
+		};
 }]);
 
 app.factory('auth', ['$http', '$window', function($http, $window){
@@ -198,11 +202,11 @@ app.controller('DistCtrl', [
 	'$scope',
 	'auth',
 	'$q',
+	'$timeout',
 	'users',
-	function($scope, auth, $q){
+	function($scope, auth, $q, $timeout){
     var directionsService = new google.maps.DirectionsService();
 		$scope.ggc = "Georgia Gwinnett College";
-		$scope.potentialDrivers = [];
 
 		// Find driving duration from google server, returns promise.
 		googleRequest = function(address1, address2){
@@ -238,6 +242,10 @@ app.controller('DistCtrl', [
 				.then(function(result){
 					wRider1 = result;
 					i++;
+					// console.log("Request done:");
+					// console.log(driverAddress);
+					// console.log(riderAddress);
+
 					$scope.$broadcast('googleEvent');
 				});
 			googleRequest(riderAddress, $scope.ggc)
@@ -254,6 +262,7 @@ app.controller('DistCtrl', [
 				});
 
 			$scope.$on('googleEvent', function () {
+				//console.log(driverAddress);
 				if (i>=3) {
 					// If rider adds no more than 10 min = 600 sec to drive, give ride
 					if (wRider1 + wRider2 <= woRider + 600) {
@@ -286,8 +295,35 @@ app.controller('DistCtrl', [
 
 			document.getElementById('drivers').innerHTML = '<h3>Potential Drivers:</h3>';
 
-			// Essentially a for loop --> for(user in $scop.users)
+			// var promises = [
+			// 	giveRide("Athens, GA", "Dacula, GA"),
+			// 	giveRide("Athens, GA", "Lawrenceville, GA"),
+			// 	giveRide("Athens, GA", "Atlanta, GA"),
+			// 	giveRide("Athens, GA", "Athens, GA")
+			// ];
+			//
+			// Promise.all(promises).then(function(){
+			// 	console.log('done');
+			// }).catch(console.log('error'));
+
+			// var promises = [];
+			//
+			// angular.forEach($scope.users, function(user, key) {
+			// 	if (currentUser.username != user.username){
+			// 		console.log(user.username);
+			// 		promises.push( giveRide(user.homeAddress, currentUser.homeAddress) );
+			// 	}
+			// });
+			//
+			// $q.all(promises).then( function(response){
+			// 	console.log('promise returns: ' + response);
+			//
+			// 	complete();
+			// });
+
+			// Essentially a for loop --> for(user in $scope.users)
 			$q.all($scope.users.map(function(user) {
+
 				if (currentUser.username != user.username){
 			    return giveRide(user.homeAddress, currentUser.homeAddress)
 						.then(function (response) {
@@ -307,9 +343,7 @@ app.controller('DistCtrl', [
 										': ' + user.phoneNumber + '<br>';
 
 							}
-						}, function(error) {
-							console.log('giveRide error from ' + user.username);
-						});
+						}).catch(console.log('error: ' + user.username));
 			}}))
 		}
 }]);
