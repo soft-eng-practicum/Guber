@@ -237,32 +237,27 @@ app.controller('DistCtrl', [
 			var i=0;
 			var output = null;
 			var deferred = $q.defer();
+			var promises = [];
 
-			googleRequest(driverAddress, riderAddress)
-				.then(function(result){
+			promises.push(googleRequest(driverAddress, riderAddress));
+			promises[0].then(function(result){
 					wRider1 = result;
 					i++;
-					// console.log("Request done:");
-					// console.log(driverAddress);
-					// console.log(riderAddress);
-
-					$scope.$broadcast('googleEvent');
 				});
-			googleRequest(riderAddress, $scope.ggc)
-				.then(function(result){
+
+			promises.push(googleRequest(riderAddress, $scope.ggc));
+			promises[1].then(function(result){
 					wRider2 = result;
 					i++;
-					$scope.$broadcast('googleEvent');
-				});
-			googleRequest(driverAddress, $scope.ggc)
-				.then(function(result){
-					woRider = result;
-					i++;
-					$scope.$broadcast('googleEvent');
 				});
 
-			$scope.$on('googleEvent', function () {
-				//console.log(driverAddress);
+			promises.push(googleRequest(driverAddress, $scope.ggc))
+			promises[2].then(function(result){
+					woRider = result;
+					i++;
+				});
+
+			$q.all(promises).then( function () {
 				if (i>=3) {
 					// If rider adds no more than 10 min = 600 sec to drive, give ride
 					if (wRider1 + wRider2 <= woRider + 600) {
@@ -295,56 +290,38 @@ app.controller('DistCtrl', [
 
 			document.getElementById('drivers').innerHTML = '<h3>Potential Drivers:</h3>';
 
-			// var promises = [
-			// 	giveRide("Athens, GA", "Dacula, GA"),
-			// 	giveRide("Athens, GA", "Lawrenceville, GA"),
-			// 	giveRide("Athens, GA", "Atlanta, GA"),
-			// 	giveRide("Athens, GA", "Athens, GA")
-			// ];
-			//
-			// Promise.all(promises).then(function(){
-			// 	console.log('done');
-			// }).catch(console.log('error'));
-
-			// var promises = [];
-			//
-			// angular.forEach($scope.users, function(user, key) {
-			// 	if (currentUser.username != user.username){
-			// 		console.log(user.username);
-			// 		promises.push( giveRide(user.homeAddress, currentUser.homeAddress) );
-			// 	}
-			// });
-			//
-			// $q.all(promises).then( function(response){
-			// 	console.log('promise returns: ' + response);
-			//
-			// 	complete();
-			// });
+			for(let i=0; i<20; i++){
+				googleRequest("Athens, GA", "Dacula, GA").then(function(response){
+					console.log(i + ": done " + response);
+			}).catch( function(){
+					console.log(i + ": error");
+			})};
 
 			// Essentially a for loop --> for(user in $scope.users)
-			$q.all($scope.users.map(function(user) {
-
-				if (currentUser.username != user.username){
-			    return giveRide(user.homeAddress, currentUser.homeAddress)
-						.then(function (response) {
-							console.log('giveRide returns: ' + user.username + " " + response);
-							/*
-								The promise return a response. The response is boolean.
-								True means currentUser is close enough to get a ride from user.
-								Inside the if statement, you can get the driver's phone number with
-								user.phoneNumber.
-
-								Issue: Right now, not all users are returning a response.
-									The ones that do look correct, though.
-							*/
-							if(Boolean(response)){
-								// Put code here about what you want to do with the response.
-								document.getElementById('drivers').innerHTML += user.username +
-										': ' + user.phoneNumber + '<br>';
-
-							}
-						}).catch(console.log('error: ' + user.username));
-			}}))
+			// $q.all($scope.users.map(function(user) {
+			//
+			// 	if (currentUser.username != user.username){
+			//     return giveRide(user.homeAddress, currentUser.homeAddress)
+			// 			.then(function (response) {
+			// 				console.log('giveRide returns: ' + user.username + " " + response);
+			// 				/*
+			// 					The promise return a response. The response is boolean.
+			// 					True means currentUser is close enough to get a ride from user.
+			// 					Inside the if statement, you can get the driver's phone number with
+			// 					user.phoneNumber.
+			//
+			// 					Issue: Right now, not all users are returning a response.
+			// 						The ones that do look correct, though.
+			// 				*/
+			// 				if(Boolean(response)){
+			// 					// Put code here about what you want to do with the response.
+			// 					document.getElementById('drivers').innerHTML += user.username +
+			// 							': ' + user.phoneNumber + '<br>';
+			//
+			// 				}
+			// 			})
+			// 			// .catch(console.log('error: ' + user.username));
+			// }}))
 		}
 }]);
 
