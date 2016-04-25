@@ -290,38 +290,39 @@ app.controller('DistCtrl', [
 
 			document.getElementById('drivers').innerHTML = '<h3>Potential Drivers:</h3>';
 
-			for(let i=0; i<20; i++){
-				googleRequest("Athens, GA", "Dacula, GA").then(function(response){
-					console.log(i + ": done " + response);
-			}).catch( function(){
-					console.log(i + ": error");
-			})};
+			// Script for manually testing
+			// for(let i=0; i<20; i++){
+			// 	googleRequest("Athens, GA", "Dacula, GA").then(function(response){
+			// 		console.log(i + ": done " + response);
+			// }).catch( function(){
+			// 		console.log(i + ": error");
+			// })};
 
 			// Essentially a for loop --> for(user in $scope.users)
-			// $q.all($scope.users.map(function(user) {
-			//
-			// 	if (currentUser.username != user.username){
-			//     return giveRide(user.homeAddress, currentUser.homeAddress)
-			// 			.then(function (response) {
-			// 				console.log('giveRide returns: ' + user.username + " " + response);
-			// 				/*
-			// 					The promise return a response. The response is boolean.
-			// 					True means currentUser is close enough to get a ride from user.
-			// 					Inside the if statement, you can get the driver's phone number with
-			// 					user.phoneNumber.
-			//
-			// 					Issue: Right now, not all users are returning a response.
-			// 						The ones that do look correct, though.
-			// 				*/
-			// 				if(Boolean(response)){
-			// 					// Put code here about what you want to do with the response.
-			// 					document.getElementById('drivers').innerHTML += user.username +
-			// 							': ' + user.phoneNumber + '<br>';
-			//
-			// 				}
-			// 			})
-			// 			// .catch(console.log('error: ' + user.username));
-			// }}))
+			$q.all($scope.users.map(function(user) {
+
+				if (currentUser.username != user.username){
+			    return giveRide(user.homeAddress, currentUser.homeAddress)
+						.then(function (response) {
+							console.log('giveRide returns: ' + user.username + " " + response);
+							/*
+								The promise return a response. The response is boolean.
+								True means currentUser is close enough to get a ride from user.
+								Inside the if statement, you can get the driver's phone number with
+								user.phoneNumber.
+
+								Issue: Right now, not all users are returning a response.
+									The ones that do look correct, though.
+							*/
+							if(Boolean(response)){
+								// Put code here about what you want to do with the response.
+								document.getElementById('drivers').innerHTML += user.username +
+										': ' + user.phoneNumber + '<br>';
+
+							}
+						})
+						// .catch(console.log('error: ' + user.username));
+			}}))
 		}
 }]);
 
